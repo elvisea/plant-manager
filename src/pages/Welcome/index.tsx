@@ -16,6 +16,7 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts'
 
 // primeiro código: missão espacial
+// em busca do próximo nível
 function Welcome() {
   const navigation = useNavigation();
   return (
