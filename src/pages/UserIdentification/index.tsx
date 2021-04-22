@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   View,
   Text,
@@ -9,7 +11,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  Alert
 } from "react-native";
 import Button from "../../components/Button";
 
@@ -35,6 +38,15 @@ function UserIdentification() {
   function handleInputChange(value: string) {
     setIsFilled(!!value)
     setName(value)
+  }
+
+  async function handleSubmit() {
+    if (!name) {
+      return Alert.alert('Me diz como devo chamar você 😄')
+    }
+    await AsyncStorage.setItem('@plantmanager:user', name)
+
+    navigation.navigate('Confirmation')
   }
 
   return (
@@ -71,9 +83,7 @@ function UserIdentification() {
               <View style={styles.footer}>
                 <Button
                   title="Avançar"
-                  onPress={() => {
-                    navigation.navigate("Confirmation");
-                  }}
+                  onPress={handleSubmit}
                 />
               </View>
 

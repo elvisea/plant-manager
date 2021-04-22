@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
-    marginHorizontal: 5
+    marginRight: 10
   },
   containerActive: {
     backgroundColor: colors.green_light

@@ -47,7 +47,6 @@ function PlantSelect() {
 
   const [page, setPage] = useState(1)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [LoadedMore, setLoadedMore] = useState(false)
 
   function handleEnvironmentSelected(environment: string) {
     setEnvironmentSelected(environment);
@@ -91,6 +90,10 @@ function PlantSelect() {
     fetchPlants()
   }
 
+  function handlePlantSelect(plant: Plants) {
+    navigation.navigate('PlantSave')
+  }
+
   useEffect(() => {
     async function fetchEnvironment() {
       const { data } = await api
@@ -127,7 +130,7 @@ function PlantSelect() {
       <View>
         <FlatList
           data={environments}
-          keyExtractor={item => item.key}
+          keyExtractor={item => String(item.key)}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.environmentList}
@@ -144,9 +147,12 @@ function PlantSelect() {
       <View style={styles.plants}>
         <FlatList
           data={filteredPlants}
-          keyExtractor={item => item.id}
+          keyExtractor={item => String(item.id)}
           renderItem={({ item }) => (
-            <PlantCardPrimary data={item} />
+            <PlantCardPrimary 
+              data={item}
+              onPress={() => handlePlantSelect(item)}
+            />
           )}
           showsVerticalScrollIndicator={false}
           numColumns={2}
@@ -166,10 +172,11 @@ function PlantSelect() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
+    marginHorizontal: 30,
   },
   header: {
-    paddingHorizontal: 30
+    marginHorizontal: 5
   },
   title: {
     fontSize: 17,
@@ -187,11 +194,10 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     marginVertical: 30,
-    marginLeft: 30
+    marginRight: 5
   },
   plants: {
     flex: 1,
-    marginHorizontal: 30
   }
 });
 
