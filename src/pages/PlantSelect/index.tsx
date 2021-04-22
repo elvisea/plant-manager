@@ -91,7 +91,7 @@ function PlantSelect() {
   }
 
   function handlePlantSelect(plant: Plants) {
-    navigation.navigate('PlantSave')
+    navigation.navigate('PlantSave', {plant})
   }
 
   useEffect(() => {
