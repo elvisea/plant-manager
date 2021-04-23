@@ -19,6 +19,7 @@ import fonts from '../../styles/fonts'
 // em busca do próximo nível
 // astronautas
 // universo infinito
+// missao cumprida
 function Welcome() {
   const navigation = useNavigation();
   return (
@@ -62,7 +63,6 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 38,
     fontSize: 28,
-    fontWeight: 'bold',
     textAlign: 'center',
     color: colors.heading,
     fontFamily: fonts.heading,

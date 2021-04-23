@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ptBR } from 'date-fns/locale'
 import { formatDistance } from 'date-fns'
-import { StyleSheet, View, Image, Text, FlatList } from 'react-native'
+import { StyleSheet, View, Image, Text, FlatList, Alert } from 'react-native'
 
 import Header from '../../components/Header'
 import PlantCardSecondary from '../../components/PlantCardSecondary'
@@ -9,14 +9,38 @@ import PlantCardSecondary from '../../components/PlantCardSecondary'
 import colors from '../../styles/colors'
 import fonts from '../../styles/fonts'
 import waterdrop from '../../assets/waterdrop.png'
-import { loadPlant, PlantProps } from '../../libs/storage'
-
+import { loadPlant, PlantProps, removePlant } from '../../libs/storage'
+import Load from '../../components/Load'
 
 export default function MyPlants() {
 
   const [myplants, setMyPlants] = useState<PlantProps[]>([])
   const [loading, setLoading] = useState(true)
   const [nextWatered, setNextWatered] = useState<string>()
+
+  function handleRemove(plant: PlantProps) {
+    Alert.alert('Remover', `Deseja remover a ${plant.name}?`, [
+      {
+        text: 'Não 🤞',
+        style: 'cancel'
+      },
+      {
+        text: 'Sim',
+        onPress: async () => {
+          try {
+            await removePlant(plant.id)
+
+            setMyPlants((oldData) =>
+              oldData.filter(item => item.id !== plant.id)
+            );
+
+          } catch (error) {
+            Alert.alert('Não Foi Possível Remover! 🙁')
+          }
+        }
+      }
+    ])
+  }
 
   useEffect(() => {
     async function loadStorageData() {
@@ -40,6 +64,10 @@ export default function MyPlants() {
     loadStorageData()
   }, [])
 
+  if (loading) {
+    return <Load />
+  }
+
   return (
     <View style={styles.container}>
       <Header />
@@ -62,6 +90,7 @@ export default function MyPlants() {
           renderItem={({ item }) => (
             <PlantCardSecondary
               data={item}
+              handleRemove={() => handleRemove(item)}
             />
           )}
           showsVerticalScrollIndicator={false}
