@@ -1,34 +1,54 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react'
+import { MaterialIcons } from '@expo/vector-icons'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-import { Text, View } from 'react-native';
-import colors from '../styles/colors';
-import fonts from '../styles/fonts';
-import MyPlants from '../pages/MyPlants';
+import colors from '../styles/colors'
+import MyPlants from '../pages/MyPlants'
+import PlantSelect from '../pages/PlantSelect'
 
-const tabRoutes = createBottomTabNavigator();
+const AppTab = createBottomTabNavigator()
 
-function NewPlant() {
+const AuthRoutes = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>NewPlant!</Text>
-    </View>
-  );
+    <AppTab.Navigator
+      tabBarOptions={{
+        activeTintColor: colors.green,
+        inactiveTintColor: colors.heading,
+        labelPosition: 'beside-icon',
+        style: {
+          height: 88
+        }
+      }}
+    >
+      <AppTab.Screen
+        name="Nova Planta"
+        component={PlantSelect}
+        options={{
+          tabBarIcon: ({ size, color }) => (
+            <MaterialIcons
+              name="add-circle-outline"
+              size={size}
+              color={color}
+            />
+          )
+        }}
+      />
+
+      <AppTab.Screen
+        name="Minhas Plantas"
+        component={MyPlants}
+        options={{
+          tabBarIcon: ({ size, color }) => (
+            <MaterialIcons
+              name="format-list-bulleted"
+              size={size}
+              color={color}
+            />
+          )
+        }}
+      />
+    </AppTab.Navigator>
+  )
 }
 
-const TabRoutes: React.FC = () => (
-
-  <tabRoutes.Navigator
-    tabBarOptions={{
-      tabStyle: { justifyContent: 'center', flexDirection: 'row' },
-      activeTintColor: colors.green,
-      inactiveTintColor: colors.gray,
-      labelStyle: { fontFamily: fonts.heading, fontSize: 15 },
-    }}
-  >
-    <tabRoutes.Screen name="Nova Planta" component={NewPlant} />
-    <tabRoutes.Screen name="Minhas Plantinhas" component={MyPlants} />
-  </tabRoutes.Navigator>
-)
-
-export default TabRoutes;
+export default AuthRoutes;

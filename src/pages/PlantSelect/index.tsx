@@ -17,31 +17,19 @@ import EnvironmentButton from '../../components/EnvironmentButton';
 import api from '../../services/api';
 import fonts from '../../styles/fonts';
 import colors from '../../styles/colors';
+import { PlantProps } from '../../libs/storage';
 
 interface Environments {
   key: string;
   title: string;
 }
 
-interface Plants {
-  id: string;
-  name: string;
-  about: string;
-  water_tips: string;
-  photo: string;
-  environments: [string];
-  frequency: {
-    times: number;
-    repeat_every: string;
-  }
-}
-
 function PlantSelect() {
   const navigation = useNavigation();
 
   const [environments, setEnvironments] = useState<Environments[]>([])
-  const [plants, setPlants] = useState<Plants[]>([])
-  const [filteredPlants, setFilteredPlants] = useState<Plants[]>([])
+  const [plants, setPlants] = useState<PlantProps[]>([])
+  const [filteredPlants, setFilteredPlants] = useState<PlantProps[]>([])
   const [environmentSelected, setEnvironmentSelected] = useState('all')
   const [loading, setLoading] = useState(true)
 
@@ -90,8 +78,8 @@ function PlantSelect() {
     fetchPlants()
   }
 
-  function handlePlantSelect(plant: Plants) {
-    navigation.navigate('PlantSave', {plant})
+  function handlePlantSelect(plant: PlantProps) {
+    navigation.navigate('PlantSave', { plant })
   }
 
   useEffect(() => {
@@ -130,7 +118,7 @@ function PlantSelect() {
       <View>
         <FlatList
           data={environments}
-          keyExtractor={item => String(item.key)}
+          keyExtractor={(item) => String(item.key)}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.environmentList}
@@ -147,9 +135,9 @@ function PlantSelect() {
       <View style={styles.plants}>
         <FlatList
           data={filteredPlants}
-          keyExtractor={item => String(item.id)}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <PlantCardPrimary 
+            <PlantCardPrimary
               data={item}
               onPress={() => handlePlantSelect(item)}
             />
@@ -173,16 +161,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    marginHorizontal: 30,
   },
   header: {
-    marginHorizontal: 5
+    paddingHorizontal: 30
   },
   title: {
     fontSize: 17,
     color: colors.heading,
     fontFamily: fonts.heading,
     lineHeight: 20,
+    marginTop: 15
   },
   subtitle: {
     fontFamily: fonts.text,
@@ -194,10 +182,13 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     marginVertical: 30,
-    marginRight: 5
+    paddingBottom: 5,
+    paddingHorizontal: 32,
   },
   plants: {
     flex: 1,
+    paddingHorizontal: 32,
+    justifyContent: 'center',
   }
 });
 

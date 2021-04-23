@@ -18,6 +18,7 @@ import fonts from '../../styles/fonts'
 // primeiro código: missão espacial
 // em busca do próximo nível
 // astronautas
+// universo infinito
 function Welcome() {
   const navigation = useNavigation();
   return (

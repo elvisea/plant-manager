@@ -1,102 +1,112 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
+import { ptBR } from 'date-fns/locale'
+import { formatDistance } from 'date-fns'
+import { StyleSheet, View, Image, Text, FlatList } from 'react-native'
 
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import Header from '../../components/Header'
+import PlantCardSecondary from '../../components/PlantCardSecondary'
 
-import Header from '../../components/Header';
-import colors from '../../styles/colors';
-import fonts from '../../styles/fonts';
+import colors from '../../styles/colors'
+import fonts from '../../styles/fonts'
+import waterdrop from '../../assets/waterdrop.png'
+import { loadPlant, PlantProps } from '../../libs/storage'
 
-import waterdropImg from '../../assets/waterdrop.png'
 
-function MyPlants() {
+export default function MyPlants() {
+
+  const [myplants, setMyPlants] = useState<PlantProps[]>([])
+  const [loading, setLoading] = useState(true)
+  const [nextWatered, setNextWatered] = useState<string>()
+
+  useEffect(() => {
+    async function loadStorageData() {
+      const plantStoraged = await loadPlant()
+
+      const nextTime = formatDistance(
+        new Date(plantStoraged[0].dateTimeNotification).getTime(),
+        new Date().getTime(),
+        { locale: ptBR }
+      )
+
+      setNextWatered(
+        `Não esqueça de regar a ${plantStoraged[0].name} à ${nextTime}`
+      )
+
+      setMyPlants(plantStoraged)
+      setLoading(false)
+
+    }
+
+    loadStorageData()
+  }, [])
+
   return (
     <View style={styles.container}>
       <Header />
 
-      <View style={styles.card_blue}>
-        <Image source={waterdropImg} style={styles.image} resizeMode="contain" />
-        <Text style={styles.description}>
-          Regue sua Aningapara {'\n'}daqui a 2 horas
-        </Text>
+      <View style={styles.spotlight}>
+        <Image
+          source={waterdrop}
+          style={styles.spotlightImage}
+        />
+
+        <Text style={styles.spotlightText}>{nextWatered}</Text>
       </View>
-      
-      <Text style={styles.title}>Próximas Regadas!</Text>
 
-      <View style={styles.card_gray}>
-        <Image source={waterdropImg} style={styles.image} resizeMode="contain" />
-        <Text style={styles.card_gray_description}>
-          Peperomia
-        </Text>
+      <View style={styles.plants}>
+        <Text style={styles.plantsTitle}>Próximas regadas</Text>
 
-        <View style={styles.metadata}>
-          <Text style={styles.metadata_text}>Regar às</Text>
-          <Text style={styles.metadata_hour}>07:30</Text>
-        </View>
+        <FlatList
+          data={myplants}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <PlantCardSecondary
+              data={item}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 30,
-    backgroundColor: '#fff',
+    paddingTop: 50,
+    backgroundColor: colors.background
   },
-  card_blue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 88,
-    width: '100%',
+  spotlight: {
+    backgroundColor: colors.blue_light,
+    paddingHorizontal: 20,
     borderRadius: 20,
-    backgroundColor: colors.blue_light
-  },
-  image: {
-    height: Dimensions.get('window').width * 0.7,
-    marginHorizontal: 20,
-  },
-  description: {
-    fontSize: 15, 
-    fontFamily: fonts.text, 
-    color: colors.blue, 
-    lineHeight: 23
-  },
-  title: {
-    fontFamily: fonts.heading,
-    fontSize: 24,
-    color: colors.heading,
-    textAlign: 'left',
-    marginVertical: 30
-  },
-  card_gray: {
+    height: 110,
     flexDirection: 'row',
-    alignItems: 'center',
-    height: 88,
-    width: '100%',
-    borderRadius: 20,
-    backgroundColor: colors.shape
-  },
-  card_gray_description: {
-    fontSize: 17, 
-    fontFamily: fonts.heading, 
-    color: colors.body_dark, 
-    lineHeight: 25
-  },
-  metadata: {
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    paddingLeft: 80
-  },
-  metadata_text: {
-    fontSize: 14, 
-    color: colors.body_light, 
-    fontFamily: fonts.text
-  },
-  metadata_hour: {
-    fontSize: 14, 
-    color: colors.body_dark, 
-    fontFamily: fonts.heading
-  }
-});
+    justifyContent: 'space-between',
+    alignItems: 'center'
 
-export default MyPlants;
+  },
+  spotlightImage: {
+    width: 60,
+    height: 60
+  },
+  spotlightText: {
+    flex: 1,
+    color: colors.blue,
+    paddingHorizontal: 20,
+  },
+  plants: {
+    flex: 1,
+    width: '100%'
+  },
+  plantsTitle: {
+    fontSize: 24,
+    fontFamily: fonts.heading,
+    color: colors.heading,
+    marginVertical: 20
+  }
+})
